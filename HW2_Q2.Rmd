@@ -1,0 +1,131 @@
+---
+title: "Comp_stat_HW2_PartII"
+author: "Jade Yun"
+date: "4/22/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(igraph)
+library(statnet)
+library(Matrix)
+```
+
+
+
+
+
+2(a)
+```{r}
+link <- "https://snap.stanford.edu/data/web-Google.txt.gz"
+download.file(link, destfile = "web-Google.txt.gz")
+snap.data <- read.table("web-Google.txt.gz", sep="\t", stringsAsFactors = FALSE)
+```
+
+
+```{r pressure}
+# convert to 'igraph' object 
+g <- graph.data.frame(snap.data, directed = TRUE)
+```
+
+what do edges and nodes represent?
+
+This dataset is used to analyze relationship between google's web pages. Nodes represent web pages and a directed edge 
+from node i to node j represents that page i hyperlinked page j. 
+
+2(b)
+
+```{r}
+vcount(g)
+ecount(g)
+```
+
+how many vertices and edges are there in the data set?
+
+There are 875713 nodes and 5105039 edges. 
+
+2(c)
+
+```{r}
+is_weighted(g)
+```
+
+Is the network weighted? If so, what do the weights represent?
+
+No, the network is not weighted. 
+
+
+```{r}
+is_directed(g)
+```
+
+Is the network directed or undirected?
+
+Yes, the network is directed. 
+
+
+2(e)
+
+How much storage will it require to store the network using sparse representation? How about as an adjacency matrix?
+
+Sparse representation: O(E) and Matrix representation: O(V^2)
+
+2(f)
+
+Which page contains the most hyperlinks to other pages? 
+Which page has been hyperlinked the most by other pages?
+
+2(g)
+
+```{r}
+# extract 3 subgraphs, 200 random nodes each
+
+sub.g1 <- induced.subgraph(g, sample(V(g), 200))
+sub.g2 <- induced.subgraph(g, sample(V(g), 200))
+sub.g3 <- induced.subgraph(g, sample(V(g), 200))
+```
+
+```{r}
+par(mfrow = c(3, 3))
+igraph_options(vertex.label=NA)
+```
+
+```{r}
+# - SUBGRAPH 1 - 
+plot(sub.g1, layout = layout.circle)
+plot(sub.g1, layout = layout.kamada.kawai)
+plot(sub.g1, layout = layout.fruchterman.reingold)
+```
+
+```{r}
+# - SUBGRAPH 2 - 
+
+plot(sub.g2, layout = layout.circle)
+plot(sub.g2, layout = layout.kamada.kawai)
+plot(sub.g2, layout = layout.fruchterman.reingold)
+```
+
+
+```{r}
+# - SUBGRAPH 3 - 
+
+plot(sub.g3, layout = layout.circle)
+plot(sub.g3, layout = layout.kamada.kawai)
+plot(sub.g3, layout = layout.fruchterman.reingold)
+```
+
+
+Are there any interesting network properties that become apparent when coloring or resizing the vertices?
+
+We could resize the vertices based on degree or centrality and color those has been hyperlinked more than 500 times.
+
+
+Here we have to resize the vertices and color the nodes. I am not sure how to do that..
+
+
+
+
+
+
