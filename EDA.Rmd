@@ -99,6 +99,7 @@ plot(fb.network, main = paste("Closeness Centrality"), usearrows = TRUE, vertex.
 ```
 
 ## Community Detection
+We ran 5 different community detection algorithms on Facebook network and compare the results that we get from each method.
 
 ```{r, echo = TRUE, eval = TRUE}
 
@@ -122,4 +123,36 @@ plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$member
 plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$membership)
 ```
 
+
+```{r}
+fb.igraph2 = simplify(fb.igraph)
+#Running 5 different community detection methods and compare
+f_g <- cluster_fast_greedy(fb.igraph2)
+info.clusters <- cluster_infomap(fb.igraph2)
+l_p <- cluster_label_prop(fb.igraph2)
+louvain <- cluster_louvain(fb.igraph2)
+walktrap <- cluster_walktrap(fb.igraph2)
+
+#size of communities for each method
+table(f_g$membership)
+table(info.clusters$membership)
+table(l_p$membership)
+table(louvain$membership)
+table(walktrap$membership)
+
+```
+
+```{r}
+par(mfrow = c(2, 3))
+plot(fb.network, coord = fb.x, main = "Original")
+plot(fb.network, coord = fb.x, main = "Fast and Greedy",
+     vertex.col = f_g$membership)
+plot(fb.network.clusters$membership)
+plot(fb.network, coord = fb.x, main = "Label Propagation", 
+     vertex.col = l_p$membership)
+plot(fb.network, coord = fb.x, main = "Louvain", 
+     vertex.col = louvain$membership)
+plot(fb.network, coord = fb.x, main = "Walktrap", 
+vertex.col = walktrap$membership)
+```
 
