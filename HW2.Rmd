@@ -93,21 +93,20 @@ IDK !!!!!! >.< !!!!!!
 
 2(a)
 ```{r}
-link <- "https://snap.stanford.edu/data/web-Google.txt.gz"
-download.file(link, destfile = "web-Google.txt.gz")
-snap.data <- read.table("web-Google.txt.gz", sep="\t", stringsAsFactors = FALSE)
+link <- "https://snap.stanford.edu/data/facebook_combined.txt.gz"
+download.file(link, destfile = "web-fb.txt.gz")
+snap.data <- read.table("web-fb.txt.gz", sep=" ", stringsAsFactors = FALSE)
 ```
 
 
 ```{r pressure}
 # convert to 'igraph' object 
-g <- graph.data.frame(snap.data, directed = TRUE)
+g <- graph.data.frame(snap.data, directed = FALSE)
 ```
 
 what do edges and nodes represent?
 
-This dataset is used to analyze relationship between google's web pages. Nodes represent web pages and a directed edge 
-from node i to node j represents that page i hyperlinked page j. 
+This dataset is used to analyze users relationships at Facebook. Nodes represent each user and a undirected edge from node i to node j represents that user i is friend with user j on Facebook. 
 
 2(b)
 
@@ -118,7 +117,7 @@ ecount(g)
 
 how many vertices and edges are there in the data set?
 
-There are 875713 nodes and 5105039 edges. 
+There are 4039 nodes and 88234 edges. 
 
 2(c)
 
@@ -137,7 +136,7 @@ is_directed(g)
 
 Is the network directed or undirected?
 
-Yes, the network is directed. 
+No, the network is NOT directed. 
 
 
 2(e)
@@ -148,8 +147,8 @@ Sparse representation: O(E) and Matrix representation: O(V^2)
 
 2(f)
 
-Which page contains the most hyperlinks to other pages? 
-Which page has been hyperlinked the most by other pages?
+Which user has the most friends? 
+Do most users have no more than 200 friends?
 
 2(g)
 
@@ -170,58 +169,85 @@ par(mfrow = c(3, 3))
 V(sub.g1)$frame.color <- "white"
 V(sub.g1)$color <- "orange"
 V(sub.g1)$label <- ""
-V(sub.g1)$size <- 10
+V(sub.g1)$size <- 5
 E(sub.g1)$arrow.mode <- 0
 ```
 
 ```{r}
-# - SUBGRAPH 1 - 
+# subgraph 1 - circle
 l <- layout.circle(sub.g1)
 plot(sub.g1, layout = l)
 ```
 
 ```{r}
+# subgraph 2- Kamada-Kawai
 plot(sub.g1, layout = layout.kamada.kawai)
 ```
 
 ```{r}
+# subgraph 2- Kamada-Kawai
 plot(sub.g1, layout = layout.fruchterman.reingold)
 ```
 
 
 ```{r}
-# - SUBGRAPH 2 - 
+V(sub.g2)$frame.color <- "white"
+V(sub.g2)$color <- "orange"
+V(sub.g2)$label <- ""
+V(sub.g2)$size <- 5
+E(sub.g2)$arrow.mode <- 0
+```
+
+
+```{r}
+# subgraph 2 - circle
 plot(sub.g2, layout = layout.circle)
 ```
 
 ```{r}
+# subgraph 2- Kamada-Kawai
 plot(sub.g2, layout = layout.kamada.kawai)
 ```
 
 ```{r}
+# subgraph 2 - Fructerman Reingold
 plot(sub.g2, layout = layout.fruchterman.reingold)
 ```
 
 ```{r}
-# - SUBGRAPH 3 - 
+V(sub.g3)$frame.color <- "white"
+V(sub.g3)$color <- "orange"
+V(sub.g3)$label <- ""
+V(sub.g3)$size <- 5
+E(sub.g3)$arrow.mode <- 0
+```
+
+```{r}
+# subgraph 3 - circle
 plot(sub.g3, layout = layout.circle)
 ```
 
 ```{r}
+# subgraph 3 - Kamada-Kawai
 plot(sub.g3, layout = layout.kamada.kawai)
 ```
 
 ```{r}
+# subgraph 3 - Fructerman Reingold
 plot(sub.g3, layout = layout.fruchterman.reingold)
 ```
 
 
 Are there any interesting network properties that become apparent when coloring or resizing the vertices?
 
-We could resize the vertices based on degree or centrality and color those has been hyperlinked more than 500 times.
+We could resize the vertices based on degree or centrality and color those has more than 50 friends. 
 
 
-Here we have to resize the vertices and color the nodes. I am not sure how to do that..
+
+
+
+
+
 
 
 
