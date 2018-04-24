@@ -1,0 +1,125 @@
+---
+title: "HW2-EDA"
+author: "Feiran Ji"
+date: "4/23/2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = TRUE, eval = TRUE}
+library(igraph, quietly = TRUE)
+library(statnet, quietly = TRUE)
+library(Matrix, quietly = TRUE)
+```
+
+
+```{r}
+# download dataset
+link <- "https://snap.stanford.edu/data/facebook_combined.txt.gz"
+download.file(link, destfile = "web-fb.txt.gz")
+fb.data <- read.table("web-fb.txt.gz", sep=" ", stringsAsFactors = FALSE)
+
+```
+
+
+```{r, echo = TRUE, eval = TRUE}
+# create igraph from edgelist
+fb.igraph <- graph.data.frame(fb.data, directed = FALSE)
+# adjacency matrix from igraph
+fb.adjacency <- as_adj(fb.igraph)
+fb.edgelist <- as.matrix(fb.data) + 1
+fb.network <- network(fb.edgelist)
+```
+
+## Shortest Paths
+First, we will identify the shortest paths are between each pair of nodes. 
+
+```{r, echo = TRUE, eval = TRUE}
+shortest.distances <- distances(fb.igraph, mode = "all") 
+
+#network diameter: the longest shortest path that is not infinite
+max(shortest.distances[which(shortest.distances < Inf)])
+
+#what is the max shortest path?
+max(shortest.distances)
+
+#infinite tells us that there are isolates!
+```
+There is no isolate account in this network. 
+
+
+##Network Centrality Measures and Visualization
+
+### Plot the data
+```{r}
+fb.x <- plot(fb.network, main=paste("Facebook Network"), edge.col = "grey50")
+```
+
+
+###Calculate In-Degree, Out-Degree, Eigenvector, Betweenness, and Closeness Centralities
+```{r, echo = TRUE, eval = TRUE}
+#in degree centrality
+in.degree.centrality <- colSums(as.matrix(fb.adjacency))
+
+#out degree centrality
+out.degree.centrality <- rowSums(as.matrix(fb.adjacency))
+
+#eigenvector centrality
+eigenvector.centrality <- eigen_centrality(fb.igraph, directed = FALSE)$vector
+
+#normalized betweenness centrality
+betweenness.centrality <- estimate_betweenness(fb.igraph, directed = TRUE, cutoff = 10)
+
+#closeness centrality
+closeness.centrality <- estimate_closeness(fb.igraph, mode = "total", normalized = FALSE, cutoff = 10)
+```
+
+
+
+###Plot Network According to Centrality Measures
+```{r, echo = TRUE}
+
+#plot in-degree
+plot(fb.network, main = paste("In-Degree Centrality"), usearrows = TRUE, vertex.cex = in.degree.centrality / 50, edge.col = "grey50", coord = fb.x)
+
+#plot out-degree
+plot(fb.network, main = paste("Out-Degree Centrality"), usearrows = TRUE, vertex.cex = out.degree.centrality / 50, edge.col = "grey50", coord = fb.x)
+
+#plot eigenvector
+plot(fb.network, main = paste("Eigenvector Centrality"), usearrows = TRUE, vertex.cex = eigenvector.centrality*4 + 1, edge.col = "grey50", coord = fb.x)
+
+#plot betweenness
+plot(fb.network, main = paste("Betweenness Centrality"), usearrows = TRUE, vertex.cex = betweenness.centrality / 15000, edge.col = "grey50", coord = fb.x)
+
+#plot closeness
+plot(fb.network, main = paste("Closeness Centrality"), usearrows = TRUE, vertex.cex = closeness.centrality * 150 + 1, edge.col = "grey50", coord = fb.x)
+```
+
+##Community Detection
+
+```{r, echo = TRUE, eval = TRUE}
+
+f_g <- cluster_fast_greedy(fb.igraph)
+
+#look at membership
+f_g$membership
+
+#look at modularity score
+f_g$modularity
+
+#what are the sizes of the class labels?
+table(f_g$membership)
+
+#plotting the network according to community label
+par(mfrow = c(1,2))
+plot(fb.network, coord = fb.x, main = "Original Network")
+plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$membership)
+
+#plotting the community structure using our own defined colors
+plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$membership)
+```
+
+
