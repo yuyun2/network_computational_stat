@@ -22,6 +22,74 @@ data(iris)
 summary(iris)
 ```
 
+```{r}
+# Separate data from class labels
+irisData=iris[,1:4]
+irisClass=as.numeric(iris$Species)
+```
+
+
+```{r}
+# Column standardize iris data to have mean 0 and unit variance
+irisData=scale(irisData)
+```
+
+```{r}
+# Calculate distance matrix between all pairs of flowers
+irisDist=as.matrix(dist(irisData))
+```
+
+```{r}
+forHist=irisDist[lower.tri(irisDist,diag=FALSE)]
+quartz()
+hist(forHist)
+```
+
+```{r}
+# 25% percentile is of distances.
+quart25=quantile(forHist,.25)
+```
+
+```{r}
+# Create an adjacency matrix template
+AdjMat=irisDist
+```
+
+```{r}
+# make the graph more sparse， remove any edges that are not in the bottom 25% of distances.
+AdjMat[AdjMat>quart25]=0
+```
+
+```{r}
+graph=graph.adjacency(AdjMat,mode='undirecte')
+```
+
+```{r}
+colorvec=c('lightslateblue','magenta','chartreuse')
+V(graph)$color=colorvec[irisClass]
+quartz()
+plot(graph,vertex.size=6,vertex.label=NA)
+```
+
+1(c)
+
+```{r}
+plot(graph, layout = layout.circle)
+```
+
+
+```{r}
+plot(graph, layout = layout.kamada.kawai)
+```
+
+
+```{r}
+plot(graph, layout = layout.fruchterman.reingold)
+```
+
+1(d)
+IDK !!!!!! >.< !!!!!!
+
 
 2(a)
 ```{r}
@@ -95,13 +163,21 @@ sub.g3 <- induced.subgraph(g, sample(V(g), 200))
 
 ```{r}
 par(mfrow = c(3, 3))
-igraph_options(vertex.label=NA)
+#igraph_options(vertex.label=NA)
+```
+
+```{r}
+V(sub.g1)$frame.color <- "white"
+V(sub.g1)$color <- "orange"
+V(sub.g1)$label <- ""
+V(sub.g1)$size <- 10
+E(sub.g1)$arrow.mode <- 0
 ```
 
 ```{r}
 # - SUBGRAPH 1 - 
-
-plot(sub.g1, layout = layout.circle)
+l <- layout.circle(sub.g1)
+plot(sub.g1, layout = l)
 ```
 
 ```{r}
