@@ -14,21 +14,20 @@ knitr::opts_chunk$set(echo = TRUE)
 library(igraph)
 library(Matrix)
 library(huge)
-library(statnet)
 data(iris)
 ```
 ## Intro
 
-Below, I'm going to generate two graph models for iris data where the nodes represent the 150 flower observations. The first model is association model and the second is gaussion model.
+Two graph models will be generated for iris data to represent inner relationship inside the data. Specifically, nodes represent the 150 flower observations. I will use two graph models: association graph and gaussion graphical model.
 
 
 ## Association model
 
-Below, we load the iris data, and construct an unweighted graph where an edge represents whether or not the correlation between two observation is statistically significant at a 0.01 level. 
+First is the association model. We will first load the iris data, and then construct an unweighted graph where an edge represents whether or not the correlation between two observation is statistically significant at a 0.01 level. 
 
 ### (a) 
-There are 1846 correlation that is statistically significant at a 0.01 level, which is far less than 150*150. The adjacent matrix is sparse according to the image, which is good.
-```{r 1.1a}
+
+```{r 1a}
 iris.t <- t(iris[, -5])
 
 m <- dim(iris.t)[1]  # 4 features
@@ -61,39 +60,55 @@ iris.adjacency <- iris.adjacency + t(iris.adjacency)
 image(Matrix(iris.adjacency))
 ```
 
+There are 1846 edges that are statistically significant at a 0.01 level, which is far less than 150*150. Rest of the edges will be removed. From the adjacency matrix image, we can see that the matrix is very sparse, as expected.
+
 
 ### (b)
-Below is the plot of the network with vertices colored based on different species names.
 
-```{r 1.1b}
+```{r 1b}
 # convert the adjacency matrix to an igraph object
 iris.g <- graph.adjacency(iris.adjacency, mode = "undirected")
 
 # color the vertices based on species name
-V(iris.g)[iris$Species == "setosa"]$color <- "red"
-V(iris.g)[iris$Species == "versicolor"]$color <- "blue"
-V(iris.g)[iris$Species == "virginica"]$color <- "yellow"
-igraph_options(label=NA)
+V(iris.g)[iris$Species == "setosa"]$color <- "green"
+V(iris.g)[iris$Species == "versicolor"]$color <- "grey"
+V(iris.g)[iris$Species == "virginica"]$color <- "orange"
+igraph_options(vertex.label=NA)
 
 plot(iris.g)
-title("Iris Network - Association Model")
+title("Iris Network - Association")
 ```
+
+The plot of the Iris network is displayed, with vertices colored based on different species names. It's clear that different species are mostly grouped together. 
 
 ### (c)
 
-After experimenting with different layouts, Kamada-Kawai best represents the inherent structure. So below, I'm displaying the network using Kamada-Kawai layout.
 
-```{r 1.1c}
+```{r 1c}
+par(mfrow = c(1, 3))
+igraph_options(vertex.label=NA)
 plot(iris.g, layout=layout.circle)
+title("Iris Network: \nCircle Layout")
 plot(iris.g, layout=layout.kamada.kawai)
 title("Iris Network: \nKamada-Kawai Layout")
 plot(iris.g, layout=layout.fruchterman.reingold)
+title("Iris Network: \nFruchterman-Reingold Layout")
 ```
 
+Experimenting with different layouts, from personally opinion, circle does not convey inherent community structure well even though vertices of same color are together. Between Kamada-Kawai and Fruchterman-Reingold, there is one single vertice in Fruchterman-Reingold layout. So I prefer Kamada-Kawai. 
+
+
+```{r 1c-part2}
+par(mfrow = c(1, 1))
+igraph_options(vertex.label=NA)
+plot(iris.g, layout=layout.kamada.kawai)
+title("Iris Network: \nKamada-Kawai Layout")
+```
+
+Here is network plot using Kamada-Kawai layout, which best represents the inherent community structure. 
 
 ## Gaussian graphical model
-
-Below, we provide fit a Gaussian graphical model to the iris data.
+Next, we'll fit the Gaussian graphical model to the iris data.
 
 ### (a)
 
@@ -112,6 +127,7 @@ huge.opt1 <- huge.select(huge.out, criterion = "ric")
 image(huge.opt1$refit)
 ```
 
+The matrix image seems more sparse than the previous one.
 
 ### (b)
 ```{r}
@@ -123,29 +139,46 @@ summary(igraph) #150 nodes and 162 edges
 V(igraph)[iris$Species == "setosa"]$color <- "green"
 V(igraph)[iris$Species == "versicolor"]$color <- "grey"
 V(igraph)[iris$Species == "virginica"]$color <- "orange"
+
+plot(igraph)
+title("Iris Network - Gaussion")
 ```
+
 
 ### (c)
+
 ```{r}
+par(mfrow = c(1, 3))
 igraph.options(vertex.label=NA)
 plot(igraph, layout = layout.circle)
-title("Iris Network - Gaussian Model (Circle)")
+title("Iris Network: \nCircle Layout")
 plot(igraph, layout = layout.kamada.kawai)
-title("Iris Network - Gaussian Model (Kamada Kawai)")
+title("Iris Network: \nKamada-Kawai Layout")
 plot(igraph, layout = layout.fruchterman.reingold)
-title("Iris Network - Gaussian Model (Fruchterman Reingold)")
+title("Iris Network: \nFruchterman-Reingold Layout")
+```
+
+Experimenting with different layouts, I still don't like the circle layout. Kamada-Kawai layout seperates vertices of different color better. So I think Kamada-Kawai layout will best represents the inherent community structure. 
+
+```{r}
+par(mfrow = c(1, 1))
+igraph.options(vertex.label=NA)
+plot(igraph, layout = layout.kamada.kawai)
+title("Iris Network: \nKamada-Kawai Layout")
 ```
 
 
-### (d)
-Similarities: 
-- Adjacency matrix: from both methods show similar pattern; 
-- Circle layout:
-- Kamada Kawai layout:
-- Fruchterman Reingold:
+#### (d) Discussion of the two models
 
-Differences:
-- Adjacency matrix: 
-- Circle layout:
-- Kamada Kawai layout:
-- Fruchterman Reingold:
+From the image of matrices generated by the two models, 
+
+- Similarities: Both matrics are symmetric.
+
+- Differences: Gaussion graphical model generates a more sparse model than Association graph. 
+
+
+From the plot of iris network (Kamada-Kawai layout),
+
+- Similarities: Vertices of different color are mostly separate.
+
+- Differences: Association graph groups vertices of same color better. In addition, the two models display the inherent structure somewhat different. In more details, Association graph separates green vertices from the rest while orange vertices and grey vertices touch together on several vertices. Gaussion graphical model, however, they are all not clearly separated from the rest.
