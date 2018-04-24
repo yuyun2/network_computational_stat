@@ -51,7 +51,7 @@ max(shortest.distances)
 There is no isolate account in this network. 
 
 
-##Network Centrality Measures and Visualization
+## Network Centrality Measures and Visualization
 
 ### Plot the data
 ```{r}
@@ -59,7 +59,7 @@ fb.x <- plot(fb.network, main=paste("Facebook Network"), edge.col = "grey50")
 ```
 
 
-###Calculate In-Degree, Out-Degree, Eigenvector, Betweenness, and Closeness Centralities
+### Calculate In-Degree, Out-Degree, Eigenvector, Betweenness, and Closeness Centralities
 ```{r, echo = TRUE, eval = TRUE}
 #in degree centrality
 in.degree.centrality <- colSums(as.matrix(fb.adjacency))
@@ -79,7 +79,7 @@ closeness.centrality <- estimate_closeness(fb.igraph, mode = "total", normalized
 
 
 
-###Plot Network According to Centrality Measures
+### Plot Network According to Centrality Measures
 ```{r, echo = TRUE}
 
 #plot in-degree
@@ -98,7 +98,7 @@ plot(fb.network, main = paste("Betweenness Centrality"), usearrows = TRUE, verte
 plot(fb.network, main = paste("Closeness Centrality"), usearrows = TRUE, vertex.cex = closeness.centrality * 150 + 1, edge.col = "grey50", coord = fb.x)
 ```
 
-##Community Detection
+## Community Detection
 
 ```{r, echo = TRUE, eval = TRUE}
 
