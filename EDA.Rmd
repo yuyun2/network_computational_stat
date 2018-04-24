@@ -1,5 +1,5 @@
 ---
-title: "HW2-EDA"
+title: "HW2-2(h)"
 author: "Feiran Ji"
 date: "4/23/2018"
 output: pdf_document
@@ -27,7 +27,7 @@ fb.data <- read.table("web-fb.txt.gz", sep=" ", stringsAsFactors = FALSE)
 
 ```{r, echo = TRUE, eval = TRUE}
 # create igraph from edgelist
-fb.igraph <- graph.data.frame(fb.data, directed = FALSE)
+fb.igraph <- simplify(graph.data.frame(fb.data, directed = FALSE))
 # adjacency matrix from igraph
 fb.adjacency <- as_adj(fb.igraph)
 fb.edgelist <- as.matrix(fb.data) + 1
@@ -101,29 +101,6 @@ plot(fb.network, main = paste("Closeness Centrality"), usearrows = TRUE, vertex.
 ## Community Detection
 We ran 5 different community detection algorithms on Facebook network and compare the results that we get from each method.
 
-```{r, echo = TRUE, eval = TRUE}
-
-f_g <- cluster_fast_greedy(fb.igraph)
-
-#look at membership
-f_g$membership
-
-#look at modularity score
-f_g$modularity
-
-#what are the sizes of the class labels?
-table(f_g$membership)
-
-#plotting the network according to community label
-par(mfrow = c(1,2))
-plot(fb.network, coord = fb.x, main = "Original Network")
-plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$membership)
-
-#plotting the community structure using our own defined colors
-plot(fb.network, coord = fb.x, main = "Fast and Greedy", vertex.col = f_g$membership)
-```
-
-
 ```{r}
 fb.igraph2 = simplify(fb.igraph)
 #Running 5 different community detection methods and compare
@@ -147,7 +124,8 @@ par(mfrow = c(2, 3))
 plot(fb.network, coord = fb.x, main = "Original")
 plot(fb.network, coord = fb.x, main = "Fast and Greedy",
      vertex.col = f_g$membership)
-plot(fb.network.clusters$membership)
+plot(fb.network, coord = fb.x, main = "Infomap",
+     vertex.col = info.clusters$membership)
 plot(fb.network, coord = fb.x, main = "Label Propagation", 
      vertex.col = l_p$membership)
 plot(fb.network, coord = fb.x, main = "Louvain", 
