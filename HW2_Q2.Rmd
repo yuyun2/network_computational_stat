@@ -11,10 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 library(igraph)
 library(statnet)
 library(Matrix)
+library(datasets)
 ```
 
+1(a)
 
-
+```{r}
+# loading iris 
+data(iris)
+summary(iris)
+```
 
 
 2(a)
@@ -94,25 +100,42 @@ igraph_options(vertex.label=NA)
 
 ```{r}
 # - SUBGRAPH 1 - 
+
 plot(sub.g1, layout = layout.circle)
+```
+
+```{r}
 plot(sub.g1, layout = layout.kamada.kawai)
+```
+
+```{r}
 plot(sub.g1, layout = layout.fruchterman.reingold)
 ```
 
+
 ```{r}
 # - SUBGRAPH 2 - 
-
 plot(sub.g2, layout = layout.circle)
+```
+
+```{r}
 plot(sub.g2, layout = layout.kamada.kawai)
+```
+
+```{r}
 plot(sub.g2, layout = layout.fruchterman.reingold)
 ```
 
-
 ```{r}
 # - SUBGRAPH 3 - 
-
 plot(sub.g3, layout = layout.circle)
+```
+
+```{r}
 plot(sub.g3, layout = layout.kamada.kawai)
+```
+
+```{r}
 plot(sub.g3, layout = layout.fruchterman.reingold)
 ```
 
